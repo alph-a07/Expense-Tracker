@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
 
 // Adds new transaction to the list, does not update UI
-class NewTransaction extends StatelessWidget {
+class NewTransaction extends StatefulWidget {
   final Function addTransaction;
 
   NewTransaction(this.addTransaction);
 
   @override
-  Widget build(BuildContext context) {
-    // Watches the TextField in real-time
-    final titleController = TextEditingController();
-    final amountController = TextEditingController();
+  State<NewTransaction> createState() => _NewTransactionState();
+}
 
+class _NewTransactionState extends State<NewTransaction> {
+  // Watches the TextField in real-time
+  // INITIALISE OUTSIDE THE BUILD METHOD
+  final titleController = TextEditingController();
+  final amountController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
     // Actions on submission
     void submit() {
       String title = titleController.text;
       double amount = double.parse(amountController.text);
 
       if (title.isNotEmpty && !(amount <= 0)) {
-        addTransaction(
+        widget.addTransaction(
             titleController.text, double.parse(amountController.text));
+        Navigator.of(context).pop(); // To close top most screen
       }
     }
 
@@ -38,6 +45,7 @@ class NewTransaction extends StatelessWidget {
             TextField(
               decoration: const InputDecoration(label: Text('Amount')),
               controller: amountController,
+              keyboardType: TextInputType.number,
               onSubmitted: (_) => submit(),
             ),
             TextButton(
